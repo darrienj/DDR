@@ -2,7 +2,7 @@ package control;
 
 public class Constants {
 
-	public final static String FILE_BASE = "/Users/drichmond/documents/DDR Music/";
+	public final static String FILE_BASE = "/Users/drichmond/Projects/DDR/";
 	
 	public final static String RIGHT_QUARTER_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_quarter_right.png";
 	public final static String UP_QUARTER_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_quarter_up.png";
@@ -126,4 +126,6 @@ public class Constants {
 	public final static String GRADE_D_minus = FILE_BASE + "DDR_Files/Grade/D_minus.png";
 	
 	public final static String GRADE_F = FILE_BASE + "DDR_Files/Grade/F.png";
+	
+	public final static String DDR_BACKGROUND = FILE_BASE + "DDR_Files/ddr-background.jpg";
 }

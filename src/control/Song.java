@@ -77,9 +77,9 @@ public class Song {
 				    			g.dispose();
 							}
 								
-							Note note = new Note("LEFT",beatCount,duration,img);
-							Note emptyNote = new Note("LEFT",beatCount,duration,null);
-							noteList[beatCount][0] = new Note("LEFT",beatCount,duration,img);
+							Note note = new Note(Note.LEFT,beatCount,duration,img);
+							Note emptyNote = new Note(Note.LEFT,beatCount,duration,null);
+							noteList[beatCount][0] = new Note(Note.LEFT,beatCount,duration,img);
 							note.miss();
 							emptyNote.miss();
 							for(int i = 1;i<duration;i++){
@@ -104,9 +104,9 @@ public class Song {
 				    			g.dispose();
 							}
 							
-							Note note = new Note("DOWN",beatCount,duration,img);
-							Note emptyNote = new Note("DOWN",beatCount,duration,null);
-							noteList[beatCount][1] = new Note("DOWN",beatCount,duration,img);
+							Note note = new Note(Note.DOWN,beatCount,duration,img);
+							Note emptyNote = new Note(Note.DOWN,beatCount,duration,null);
+							noteList[beatCount][1] = new Note(Note.DOWN,beatCount,duration,img);
 							note.miss();
 							emptyNote.miss();
 							for(int i = 0;i<duration;i++){
@@ -132,9 +132,9 @@ public class Song {
 							}
 							
 							
-							Note note = new Note("UP",beatCount,duration,img);
-							Note emptyNote = new Note("UP",beatCount,duration,null);
-							noteList[beatCount][2] = new Note("UP",beatCount,duration,img);
+							Note note = new Note(Note.UP,beatCount,duration,img);
+							Note emptyNote = new Note(Note.UP,beatCount,duration,null);
+							noteList[beatCount][2] = new Note(Note.UP,beatCount,duration,img);
 							note.miss();
 							emptyNote.miss();
 							for(int i = 0;i<duration;i++){
@@ -160,9 +160,9 @@ public class Song {
 							}
 							
 							
-							Note note = new Note("RIGHT",beatCount,duration,img);
-							Note emptyNote = new Note("RIGHT",beatCount,duration,null);
-							noteList[beatCount][3] = new Note("RIGHT",beatCount,duration,img);
+							Note note = new Note(Note.RIGHT,beatCount,duration,img);
+							Note emptyNote = new Note(Note.RIGHT,beatCount,duration,null);
+							noteList[beatCount][3] = new Note(Note.RIGHT,beatCount,duration,img);
 							note.miss();
 							emptyNote.miss();
 							for(int i = 0;i<duration;i++){
@@ -345,15 +345,15 @@ public class Song {
 			}
 			for(int i = beat;i<oldHold+beat;i++){
 				if(i%15 == 0 || i == hold+beat){
-					Note note = new Note("UPDATED",newBeat,hold,img);
+					Note note = new Note(noteList[beat][index].getDirection(),newBeat,hold,img);
 					note.breakHold();
 					noteList[i][index] = note;
 				} else if(noteList[i][index] != null){
-					Note note = new Note("UPDATED",newBeat,hold,img);
+					Note note = new Note(noteList[beat][index].getDirection(),newBeat,hold,img);
 					note.breakHold();
 					noteList[i][index] = note;
 				} else{
-					Note note = new Note("UPDATED",newBeat,hold,null);
+					Note note = new Note(noteList[beat][index].getDirection(),newBeat,hold,null);
 					note.breakHold();
 					noteList[i][index] = note;
 				}

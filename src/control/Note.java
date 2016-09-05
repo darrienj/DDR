@@ -1,9 +1,18 @@
 package control;
 import java.awt.image.BufferedImage;
 
-
+/**
+ * This class is an information holder for a song note.
+ * @author drichmond
+ *
+ */
 public class Note {
-	private String name;
+	
+	public static final int LEFT = 0;
+	public static final int RIGHT = 1;
+	public static final int UP = 2;
+	public static final int DOWN = 3;
+	private int direction;
 	private int beat;
 	private int hold;
 	private BufferedImage img;
@@ -11,15 +20,15 @@ public class Note {
 	private boolean canBeActive;
 	private boolean miss;
 	
-	public Note(String name,int beat,int hold,BufferedImage img){
+	public Note(int direction,int beat,int hold,BufferedImage img){
 		
-		this.name = name;
+		this.direction  = direction;
 		this.beat = beat;
 		this.hold = hold;
-		this.img = img;
+		this.img = img;  //TODO image should not be stored in note.
 		this.active = false;
-		this.canBeActive = true;
-		this.miss = false;
+		this.canBeActive = true; //TODO information on whether the note is active should not be here
+		this.miss = false; //TODO whether the user missed the note should not be stored here
 	}
 	public BufferedImage getImage(){
 		return img;
@@ -30,8 +39,8 @@ public class Note {
 	public int getHold(){
 		return hold;
 	}
-	public String getName(){
-		return this.name;
+	public int getDirection(){
+		return this.direction;
 	}
 	public void breakHold(){
 		this.canBeActive = false;

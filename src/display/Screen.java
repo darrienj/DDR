@@ -90,7 +90,7 @@ public class Screen {
 	}
 	public void playSong(Song song){
 		try {
-			BufferedImage background  = ImageIO.read(new File("/Users/drichmond/documents/DDR Music/ddr-background.jpg"));
+			BufferedImage background  = ImageIO.read(new File(Constants.DDR_BACKGROUND));
 			this.frame.playSong(background, song);
 		} catch(Exception e){
 			e.printStackTrace();
