@@ -278,6 +278,11 @@ public class Song {
 			return emptyNoteList;
 		}
 	}
+	
+	public Note[][] getNotes(){
+		return noteList;
+	}
+	
 	public void activateNote(int beat, int index){
 		if(noteList[beat][index] != null){
 			noteList[beat][index].setActive(true);
