@@ -15,7 +15,7 @@ public class Main {
 		int oldSelection = 1;
 		while(true){
 			try{
-				String[] selection = selectSong(screen,oldSelection); //name,filename,difficulty
+				String[] selection = selectSong(screen,oldSelection);
 				String musicFile = Constants.FILE_BASE + "DDR_Files/Music/"+selection[1] + ".wav";
 				String songFile = Constants.FILE_BASE + "DDR_Files/Song/"+selection[2] + "/"+selection[1]+".song";
 				int songId = Integer.parseInt(selection[3]);

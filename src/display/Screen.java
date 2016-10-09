@@ -1,5 +1,7 @@
 package display;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +12,8 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
+import control.Arrow;
+import control.Score;
 import control.Song;
 import control.Constants;
 public class Screen {
@@ -17,49 +21,7 @@ public class Screen {
 	ScreenFrame frame;
 	private String[] songSelection;
 	public Screen(){
-		try{
-			BufferedImage[][] receiveArrows = new BufferedImage[4][];
-			for(int i = 0;i<receiveArrows.length;i++){
-				receiveArrows[i] = new BufferedImage[7];
-			}
-			receiveArrows[0][0] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW));
-			receiveArrows[1][0] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW));
-			receiveArrows[2][0] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW));
-			receiveArrows[3][0] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW));
-			
-			receiveArrows[0][1] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_0));
-			receiveArrows[1][1] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_0));
-			receiveArrows[2][1] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_0));
-			receiveArrows[3][1] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_0));
-			
-			receiveArrows[0][2] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_1));
-			receiveArrows[1][2] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_1));
-			receiveArrows[2][2] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_1));
-			receiveArrows[3][2] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_1));
-			
-			receiveArrows[0][3] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_2));
-			receiveArrows[1][3] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_2));
-			receiveArrows[2][3] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_2));
-			receiveArrows[3][3] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_2));
-			
-			receiveArrows[0][4] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_3));
-			receiveArrows[1][4] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_3));
-			receiveArrows[2][4] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_3));
-			receiveArrows[3][4] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_3));
-			
-			receiveArrows[0][5] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_4));
-			receiveArrows[1][5] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_4));
-			receiveArrows[2][5] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_4));
-			receiveArrows[3][5] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_4));
-			
-			receiveArrows[0][6] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_5));
-			receiveArrows[1][6] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_5));
-			receiveArrows[2][6] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_5));
-			receiveArrows[3][6] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_5));
-			this.frame = new ScreenFrame(receiveArrows);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.frame = new ScreenFrame();
 	}
 	public void selectSong(int oldSelection) throws IOException{
 		File file = new File(Constants.FILE_BASE + "DDR_Files/SongList.txt");
@@ -91,7 +53,11 @@ public class Screen {
 	public void playSong(Song song){
 		try {
 			BufferedImage background  = ImageIO.read(new File(Constants.DDR_BACKGROUND));
-			this.frame.playSong(background, song);
+			Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+			Dimension scaleFactor = new Dimension();
+			scaleFactor.setSize(dimension.getWidth()/1280,dimension.getHeight()/1280);
+			Score score = new Score(song.getId(),scaleFactor,song);
+			this.frame.playSong(background, getReceiveArrow(),getDanceChart(song),score);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -114,5 +80,66 @@ public class Screen {
 	}
 	public boolean submittedScore() {
 		return frame.submittedScore();
+	}
+	private DanceChart getDanceChart(Song song) throws IOException{
+		BufferedImage[][] noteArrows = new BufferedImage[4][];
+		for(int i = 0;i<noteArrows.length;i++){
+			noteArrows[i] = new BufferedImage[2];
+		}
+		noteArrows[0][0] = ImageIO.read(new File(Constants.LEFT_QUARTER_ARROW));
+		noteArrows[0][1] = ImageIO.read(new File(Constants.LEFT_QUARTER_HOLD_ARROW));
+		noteArrows[1][0] = ImageIO.read(new File(Constants.RIGHT_QUARTER_ARROW));
+		noteArrows[1][1] = ImageIO.read(new File(Constants.RIGHT_QUARTER_HOLD_ARROW));
+		noteArrows[2][0] = ImageIO.read(new File(Constants.UP_QUARTER_ARROW));
+		noteArrows[2][1] = ImageIO.read(new File(Constants.UP_QUARTER_HOLD_ARROW));
+		noteArrows[3][0] = ImageIO.read(new File(Constants.DOWN_QUARTER_ARROW));
+		noteArrows[3][1] = ImageIO.read(new File(Constants.DOWN_QUARTER_HOLD_ARROW));
+		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+		DanceChart danceChart = new DanceChart(song, noteArrows, DancePanel.MILLISECONDS_PER_BEAT,(int)(dimension.getHeight()));
+		return danceChart;
+	}
+	private ReceiveArrow getReceiveArrow() throws IOException{
+		BufferedImage[][] receiveArrows = new BufferedImage[4][];
+		for(int i = 0;i<receiveArrows.length;i++){
+			receiveArrows[i] = new BufferedImage[7];
+		}
+
+		receiveArrows[Arrow.LEFT][0] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW));
+		receiveArrows[Arrow.DOWN][0] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW));
+		receiveArrows[Arrow.UP][0] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW));
+		receiveArrows[Arrow.RIGHT][0] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW));
+		
+		receiveArrows[Arrow.LEFT][1] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_5));
+		receiveArrows[Arrow.DOWN][1] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_5));
+		receiveArrows[Arrow.UP][1] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_5));
+		receiveArrows[Arrow.RIGHT][1] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_5));
+		
+		receiveArrows[Arrow.LEFT][2] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_4));
+		receiveArrows[Arrow.DOWN][2] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_4));
+		receiveArrows[Arrow.UP][2] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_4));
+		receiveArrows[Arrow.RIGHT][2] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_4));
+		
+		receiveArrows[Arrow.LEFT][3] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_3));
+		receiveArrows[Arrow.DOWN][3] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_3));
+		receiveArrows[Arrow.UP][3] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_3));
+		receiveArrows[Arrow.RIGHT][3] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_3));
+		
+		receiveArrows[Arrow.LEFT][4] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_2));
+		receiveArrows[Arrow.DOWN][4] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_2));
+		receiveArrows[Arrow.UP][4] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_2));
+		receiveArrows[Arrow.RIGHT][4] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_2));
+		
+		receiveArrows[Arrow.LEFT][5] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_1));
+		receiveArrows[Arrow.DOWN][5] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_1));
+		receiveArrows[Arrow.UP][5] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_1));
+		receiveArrows[Arrow.RIGHT][5] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_1));
+		
+		receiveArrows[Arrow.LEFT][6] = ImageIO.read(new File(Constants.RECEIVE_LEFT_ARROW_PRESSED_0));
+		receiveArrows[Arrow.DOWN][6] = ImageIO.read(new File(Constants.RECEIVE_DOWN_ARROW_PRESSED_0));
+		receiveArrows[Arrow.UP][6] = ImageIO.read(new File(Constants.RECEIVE_UP_ARROW_PRESSED_0));
+		receiveArrows[Arrow.RIGHT][6] = ImageIO.read(new File(Constants.RECEIVE_RIGHT_ARROW_PRESSED_0));
+		
+		ReceiveArrow receiveArrow = new ReceiveArrow(receiveArrows);
+		return receiveArrow;		
 	}
 }

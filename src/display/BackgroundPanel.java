@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 import control.*;
 
 public class BackgroundPanel extends JPanel{
@@ -21,10 +22,7 @@ public class BackgroundPanel extends JPanel{
 	Dimension scaleFactor;
 	private DancePanel dancePanel;
 	//laptop screen dimensions are 1280 x 800
-	public BackgroundPanel(Dimension dimension,Song song){
-		this(dimension,null,null,song);
-	}
-	public BackgroundPanel(Dimension dimension,BufferedImage background,BufferedImage receiveArrows[][],Song song){
+	public BackgroundPanel(Dimension dimension,BufferedImage background,ReceiveArrow receiveArrows,DanceChart danceChart,Score score){
 		super();
 		this.setLayout(new GridBagLayout());
 		scaleFactor = new Dimension();
@@ -42,7 +40,7 @@ public class BackgroundPanel extends JPanel{
 			this.background = newBackground;
 			g.dispose();
 			GridBagConstraints c = new GridBagConstraints();
-			this.dancePanel = new DancePanel(scaleFactor,receiveArrows,song,newBackground);
+			this.dancePanel = new DancePanel(scaleFactor,receiveArrows,danceChart,score,newBackground);
 			this.addKeyListener(new DancePanelInput(dancePanel));
 			this.setFocusable(true);
 			c.fill = GridBagConstraints.BOTH;

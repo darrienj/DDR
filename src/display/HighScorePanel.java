@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
 import control.Constants;
+import control.Score;
 
 public class HighScorePanel extends JPanel{
 

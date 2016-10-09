@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import control.Constants;
+import control.Score;
 
 public class SongHighScorePanel extends JPanel  implements InputReceiver{
 

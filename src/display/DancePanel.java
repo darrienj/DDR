@@ -8,107 +8,86 @@ import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
+import sun.awt.X11.Screen;
 import control.*;
 public class DancePanel extends JPanel implements InputReceiver{
 
 	private final static Color PURPLE = new Color(188,69,247);
 	private final static Color BLUE = new Color(40,219,255);
-	private BufferedImage[][] newReceiveArrows;
 	private Dimension scaleFactor;
-	private int FORCED_BEATS_ON_SCREEN = 14; 
-	private int BEATS_ON_SCREEN = 16; 
-	private double currentBeat;
-	private boolean pressed[];
-	
-	private final float pressedRelaxRate = 32;
-	private double[] pressedRelax;
-	private Score score;
-	private BufferedImage topCorner; 
+	public static final int BEATS_ON_SCREEN = 60; //configurable
+	public static final int MILLISECONDS_PER_BEAT = 60; 
+	private static final int MILLISECONDS_ON_SCREEN = BEATS_ON_SCREEN*MILLISECONDS_PER_BEAT;
+	private static final int MILLISECONDS_PRESS_RANGE = MILLISECONDS_ON_SCREEN/5;
+	private ReceiveArrow receiveArrow;
+	private BufferedImage topBackground; 
 	private DanceChart danceChart;
-	
-	private double oldTime = 0;
-	public DancePanel(Dimension scaleFactor,BufferedImage[][] receiveArrows,Song song,BufferedImage background){
+	private int currentTime;
+	private Score score;
+	private FadeImage description;
+	private List<Arrow> arrowList = new LinkedList<Arrow>();
+	public DancePanel(Dimension scaleFactor,ReceiveArrow receiveArrows,DanceChart danceChart,Score score, BufferedImage background){
 		super();
-		danceChart = new DanceChart(song);
+		this.danceChart = danceChart;
 		this.scaleFactor = scaleFactor;
-		try {
-			this.score = new Score(song.getId(),scaleFactor,song);
-		} catch (IOException e) {
-			//can't display description images
-			e.printStackTrace();
-		}
- 		this.newReceiveArrows = new BufferedImage[4][];
-		for(int i = 0;i<newReceiveArrows.length;i++){
-			this.newReceiveArrows[i] = new BufferedImage[7];
-		}
-		this.pressed = new boolean[4];
-		for(int i = 0;i<pressed.length;i++){
-			pressed[i] = false;
-		}
-		BEATS_ON_SCREEN = (int)(22*song.getBpm()/140.0);
-		if(FORCED_BEATS_ON_SCREEN != -1){
-			BEATS_ON_SCREEN = FORCED_BEATS_ON_SCREEN;
-		}
-		this.pressedRelax = new double[4];
-		for(int i = 0;i<receiveArrows.length;i++){
-			for(int j = 0;j<receiveArrows[i].length;j++){
-				Image scaledReceiveArrows = receiveArrows[i][j].getScaledInstance((int)(scaleFactor.getWidth()*125), (int)(scaleFactor.getHeight()*125), BufferedImage.SCALE_SMOOTH);
-				newReceiveArrows[i][j] = new BufferedImage(scaledReceiveArrows.getWidth(null), scaledReceiveArrows.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-				Graphics g2 = newReceiveArrows[i][j].getGraphics();
-				g2.drawImage(scaledReceiveArrows, 0, 0, null);
-				g2.dispose();
-			}
-		}
-		this.topCorner = background.getSubimage(0, 0, (int)(4*(newReceiveArrows[0][0].getWidth()+35+(10*scaleFactor.getWidth()))), (int)(35*scaleFactor.getHeight()+newReceiveArrows[0][0].getHeight()/2));
+ 		this.receiveArrow = receiveArrows;
+		this.score = score;
+		this.topBackground = background.getSubimage(0, 0, background.getWidth(), (int)(35*scaleFactor.getHeight())+ (int)(receiveArrows.getLeft().getHeight()/2));
 		this.setOpaque(false);
 	}
 	
+	/**
+	 * Updates the time in seconds
+	 * @param time
+	 */
 	public void update(double time){
-		
-		double deltaTime = time - oldTime;
-		for(int i = 0;i<pressedRelax.length;i++){
-			if(pressedRelax[i] != 0 && pressed[i] == false){
-				double tmp = pressedRelax[i] + pressedRelaxRate*deltaTime;
-				if(tmp >= newReceiveArrows[0].length-1){
-					pressedRelax[i] = 0;
-				} else{
-					pressedRelax[i] = tmp;
-				}
-			}
-		}
-		
+		score.update(time);
+		receiveArrow.update((int)(time*1000));
+		this.currentTime = (int)(time*1000);
+		List<Arrow> newArrowList = danceChart.getArrowInRangeKeepHold((int)(currentTime-MILLISECONDS_ON_SCREEN/5.0), (int)currentTime+MILLISECONDS_ON_SCREEN);
+		checkMissedNotes(currentTime,newArrowList);
+		arrowList = newArrowList;
 		this.repaint();
 		
 	}
 	@Override
 	protected void paintComponent(Graphics g) {
-
 		super.paintComponent(g);
 		//combo
-		if(score.getCombo() > 10){//waseem  Athelas Baoli SC
-			g.setFont(new Font("waseem", Font.PLAIN, (int)(150*scaleFactor.getHeight())));
-			g.setColor(PURPLE);
-			g.drawString(score.getCombo()+"",(int) (288*scaleFactor.getWidth()), (int)(400*scaleFactor.getHeight()));//9
-			g.setFont(new Font("Baoli SC", Font.BOLD, (int)(45*scaleFactor.getHeight())));
-			g.setColor(BLUE);
-			g.drawString("Combo",(int) (430*scaleFactor.getWidth()), (int)(400*scaleFactor.getHeight()));//9
-		}
+		g.setFont(new Font("waseem", Font.PLAIN, (int)(150*scaleFactor.getHeight())));
+		g.setColor(PURPLE);
+		g.drawString(score.getCombo()+"",(int) (288*scaleFactor.getWidth()), (int)(400*scaleFactor.getHeight()));//9
+		g.setFont(new Font("Baoli SC", Font.BOLD, (int)(45*scaleFactor.getHeight())));
+		g.setColor(BLUE);
+		g.drawString("Combo",(int) (430*scaleFactor.getWidth()), (int)(400*scaleFactor.getHeight()));//9
 		//descriptions
-
-		//active holds
-
+		if(description != null && description.getImage(currentTime) != null){
+			BufferedImage img = description.getImage(currentTime);
+			g.drawImage(img,(int)(288*scaleFactor.getWidth() - img.getWidth()/2), (int)(200*scaleFactor.getHeight()), null);
+		}
+		//pressed holds
+		for(Arrow arrow : arrowList){
+	    	if(arrow.getHold() >0){
+	    		drawArrow(arrow,g);
+	    	}
+	    }
 	    //top corner
-	    g.drawImage(topCorner, 0, 0, null);
+		g.drawImage(topBackground, 0, 0, null);
 	    //receive arrows
-	    
-		//inactive holds and notes
-	    List<Arrow> arrowList = danceChart.getArrowInRange((int)currentBeat, (int)currentBeat+20);
+		drawArrow(this.receiveArrow.getUp(),currentTime,Arrow.UP,g);
+		drawArrow(this.receiveArrow.getDown(),currentTime,Arrow.DOWN,g);
+		drawArrow(this.receiveArrow.getRight(),currentTime,Arrow.RIGHT,g);
+		drawArrow(this.receiveArrow.getLeft(),currentTime,Arrow.LEFT,g);
+		//unpressed holds and notes
 	    for(Arrow arrow : arrowList){
-	    	drawArrow(arrow,g);
+	    	if(arrow.getActive() == false){
+	    		drawArrow(arrow,g);
+	    	}
 	    }
 	    g.setFont(new Font("Courier", Font.BOLD, (int)(30*scaleFactor.getHeight())));
 	    g.setColor(Color.YELLOW);
@@ -116,9 +95,12 @@ public class DancePanel extends JPanel implements InputReceiver{
 	    
 	}
 	private void drawArrow(Arrow arrow,Graphics g){
+		drawArrow(arrow.getImage(),arrow.getTime(),arrow.getDirection(),g);
+	}
+	private void drawArrow(BufferedImage img, int arrowTime, int arrowDirection, Graphics g){
 		try{
 			int direction = 0;
-			switch(arrow.getDirection()){
+			switch(arrowDirection){
 			case(Arrow.LEFT):
 				direction = 0;
 				break;
@@ -132,9 +114,10 @@ public class DancePanel extends JPanel implements InputReceiver{
 				direction = 3;
 				break;
 			}
-			int y = (int)(((arrow.getTime()-currentBeat)*scaleFactor.getHeight()*800/BEATS_ON_SCREEN) +35*scaleFactor.getHeight()); //the 35/2 is a hacky way to compensate for the delay between the time we have in code, and displaying it on screen
-			int x = (int)(direction*(newReceiveArrows[0][0].getWidth()) + (10*direction+35)*scaleFactor.getWidth());
-			g.drawImage(arrow.getImage(), x, y, null);
+			double beat = (arrowTime-currentTime)*1.0/MILLISECONDS_PER_BEAT;
+			int y = (int)((beat*scaleFactor.getHeight()*800/BEATS_ON_SCREEN) +35*scaleFactor.getHeight()); //the 35/2 is a hacky way to compensate for the delay between the time we have in code, and displaying it on screen
+			int x = (int)(direction*(img.getWidth()) + (10*direction+35)*scaleFactor.getWidth());
+			g.drawImage(img, x, y, null);
 		} catch(Exception e){
 			e.printStackTrace(); //probably a fluke...ignore it
 		}
@@ -143,37 +126,66 @@ public class DancePanel extends JPanel implements InputReceiver{
 		return score;
 	}
 	public void pressLeft(){
-		pressed[0] = true;
+		receiveArrow.pressLeft();
+		pressArrow(Arrow.LEFT);
 	}
 	public void pressRight(){
-		pressed[3] = true;
+		receiveArrow.pressRight();
+		pressArrow(Arrow.RIGHT);
 	}
 	public void pressUp(){
-		pressed[2] = true;
+		receiveArrow.pressUp();
+		pressArrow(Arrow.UP);
 	}
 	public void pressDown(){
-		pressed[1] = true;
+		receiveArrow.pressDown();
+		pressArrow(Arrow.DOWN);
 	}
 	public void pressEnter(){
 		
 	}
 	public void releaseLeft(){
-		pressed[0] = false;
-		pressedRelax[0] = 2f;
+		receiveArrow.releaseLeft();
+		releaseArrow(Arrow.LEFT);
 	}
 	public void releaseRight(){
-		pressed[3] = false;
-		pressedRelax[3] = 2f;
+		receiveArrow.releaseRight();
+		releaseArrow(Arrow.RIGHT);
 	}
 	public void releaseUp(){
-		pressed[2] = false;
-		pressedRelax[2] = 2f;
+		receiveArrow.releaseUp();
+		releaseArrow(Arrow.UP);
 	}
 	public void releaseDown(){
-		pressed[1] = false;
-		pressedRelax[1] = 2f;
+		receiveArrow.releaseDown();
+		releaseArrow(Arrow.DOWN);
 	}
 	public void releaseEnter(){
 		
+	}
+	public void checkMissedNotes(int time, List<Arrow> newArrowList){
+		if(newArrowList == null || arrowList == null){
+			return;
+		}
+		for(Arrow arrow : arrowList){
+			if(newArrowList.contains(arrow) == false){
+				if(arrow.getActive() == false){
+					arrow.activate();
+					description = score.missNote();
+					description.start(currentTime);
+				}
+			}
+		}
+	}
+	private void pressArrow(int direction){
+		Arrow arrow = danceChart.pressArrow(direction, currentTime,MILLISECONDS_PRESS_RANGE);
+		if(arrow != null){
+			description = score.addNote(arrow,currentTime,MILLISECONDS_PRESS_RANGE/2);
+			description.start(currentTime);
+		}
+	}
+	private void releaseArrow(int direction){
+		Arrow arrow = danceChart.releaseArrow(direction, currentTime);
+		score.releaseNote(arrow);
 	}
 }

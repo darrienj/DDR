@@ -13,13 +13,11 @@ public class ScreenFrame {
 	private BackgroundPanel backgroundPanel;
 	private JFrame frame;
 	private Dimension screenSize;
-	private BufferedImage receiveArrows[][];
 	private SelectorBackgroundPanel selectorPanel;
 	private SongHighScorePanel scorePanel;
 	
-	public ScreenFrame(BufferedImage receiveArrows[][]){
+	public ScreenFrame(){
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.receiveArrows = receiveArrows;
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -27,12 +25,9 @@ public class ScreenFrame {
 		int height = (int)(screenSize.getHeight());
 		frame.setSize(width, height);
 	}
-	public void playSong(BufferedImage background,Song song){
+	public void playSong(BufferedImage background,ReceiveArrow receiveArrow,DanceChart danceChart,Score score){
 		dropAllPanels();
-		if(background != null)
-			this.backgroundPanel = new BackgroundPanel(screenSize,background,receiveArrows,song);	
-		else
-			this.backgroundPanel = new BackgroundPanel(screenSize,song);
+		this.backgroundPanel = new BackgroundPanel(screenSize,background,receiveArrow,danceChart,score);	
 		frame.add(this.backgroundPanel);	
 		frame.setVisible(true);
 	}

@@ -20,7 +20,7 @@ public class Note {
 	private boolean canBeActive;
 	private boolean miss;
 	
-	public Note(int direction,int beat,int hold,BufferedImage img){
+	public Note(int direction,int beat,int hold){
 		
 		this.direction  = direction;
 		this.beat = beat;
@@ -29,9 +29,6 @@ public class Note {
 		this.active = false;
 		this.canBeActive = true; //TODO information on whether the note is active should not be here
 		this.miss = false; //TODO whether the user missed the note should not be stored here
-	}
-	public BufferedImage getImage(){
-		return img;
 	}
 	public int getBeat(){
 		return beat;
