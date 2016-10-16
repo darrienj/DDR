@@ -13,5 +13,6 @@ public interface InputReceiver {
 	public void releaseDown();
 	
 	public void pressEnter();
+	public void pressEscape();
 	public void releaseEnter();
 }

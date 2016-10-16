@@ -1,12 +1,14 @@
 package display;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import control.Arrow;
 import control.ArrowImage;
 import control.Note;
+import control.PremadeSong;
 import control.Song;
 
 /**
@@ -36,8 +38,8 @@ public class DanceChart {
 	 *            one beat
 	 *
 	 */
-	public DanceChart(Song song, BufferedImage[][] rawImage, int timePerBeat,
-			int heightOfScreen) {
+	public DanceChart(PremadeSong song, BufferedImage[][] rawImage,
+			int timePerBeat, int timeOnScreen, int heightOfScreen) {
 		arrowList = new LinkedList<Arrow>();
 		Note[][] noteList = song.getNotes();
 		for (Note[] beatNote : noteList) {
@@ -48,16 +50,33 @@ public class DanceChart {
 								rawImage[note.getDirection()][0],
 								rawImage[note.getDirection()][1], beatToTime(
 										note.getHold(), song.getBpm()),
-								timePerBeat,heightOfScreen);
+								timeOnScreen, heightOfScreen);
 						image.build();
 						Arrow arrow = new Arrow(beatToTime(note.getBeat(),
-								song.getBpm()), note.getHold(),
+								song.getBpm()), beatToTime(note.getHold(),song.getBpm()),
 								note.getDirection(), image);
 						arrowList.add(arrow);
 					}
 				}
 			}
 
+		}
+	}
+
+	public DanceChart(List<Arrow> originalArrowList,
+			BufferedImage[][] rawImage, int timeOnScreen, int heightOfScreen) {
+		this.arrowList = new LinkedList<Arrow>();
+		for (Arrow arrow : originalArrowList) {
+			if (arrow != null) {
+				ArrowImage image = new ArrowImage(
+						rawImage[arrow.getDirection()][0],
+						rawImage[arrow.getDirection()][1], arrow.getHold(),
+						timeOnScreen, heightOfScreen);
+				image.build();
+				Arrow finalArrow = new Arrow(arrow.getTime(), arrow.getHold(),
+						arrow.getDirection(), image);
+				arrowList.add(finalArrow);
+			}
 		}
 	}
 
@@ -78,20 +97,20 @@ public class DanceChart {
 	 *         the timing of the press
 	 */
 	public Arrow pressArrow(int direction, int time, int range) {
-		List<Arrow> arrowList = getArrowInRange(time - range / 2, time + range
-				/ 2);
-		int index = 0;
-		while (index < arrowList.size()) {
-			Arrow arrow = arrowList.get(index);
-			if (arrow.getActive() == false && arrow.getDirection() == direction) {
-				arrow.activate();
-				if (arrow.getHold() > 0)
-					holdList.add(arrow);
-				return arrow;
+		synchronized(holdList){
+			List<Arrow> arrowList = getArrowInRange(time - range / 2, time + range
+					/ 2);
+			int index = 0;
+			while (index < arrowList.size()) {
+				Arrow arrow = arrowList.get(index);
+				if (arrow.getActive() == false && arrow.getDirection() == direction) {
+					arrow.activate();
+					return arrow;
+				}
+				index++;
 			}
-			index++;
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -105,26 +124,18 @@ public class DanceChart {
 	 *            the time of the song in milliseconds
 	 */
 	public Arrow releaseArrow(int direction, int time) {
-		int i = 0;
-		while (i < holdList.size()) {
-			Arrow arrow = holdList.get(i);
-			if (arrow.getHold() + arrow.getTime() > time) {
-				arrow.deactivate(time);
-				holdList.remove(i);
+		synchronized(holdList){
+			int i = 0;
+			Arrow arrow = null;
+			while (i < holdList.size()) {
+				arrow = holdList.get(i);
+				if (arrow.getDirection() == direction) {
+					arrow.deactivate(time);
+				}
+				i++;
 			}
-			i++;
+			return arrow;
 		}
-		i = 0;
-		while (i < holdList.size()) {
-			Arrow arrow = holdList.get(i);
-			if (arrow.getDirection() == direction) {
-				arrow.deactivate(time);
-				holdList.remove(arrow);
-				return arrow;
-			}
-			i++;
-		}
-		return null;
 	}
 
 	/**
@@ -152,35 +163,41 @@ public class DanceChart {
 		}
 		if (arrowList.get(startIndex).getTime() <= endTime) {
 			List<Arrow> result = arrowList.subList(startIndex, endIndex);
-			return result;
+			List<Arrow> copy = new ArrayList<Arrow>();
+			for (Arrow tmpArrow : result) {
+				copy.add(tmpArrow);
+			}
+			return copy;
 		}
 		return new LinkedList<Arrow>();
 	}
 
-	public List<Arrow> getArrowInRangeKeepHold(int startTime, int endTime){
-		List<Arrow> result = getArrowInRange(startTime,endTime);
-		//add to holdList if not already there
-		for(int i = 0;i<result.size();i++){
-			if(result.get(i).getHold() > 0){
-				if(holdList.contains(result.get(i)) == false){
-					holdList.add(result.get(i));
+	public List<Arrow> getArrowInRangeKeepHold(int startTime, int endTime) {
+		synchronized(holdList){
+			List<Arrow> result = getArrowInRange(startTime, endTime);
+			// add to holdList if not already there
+			for (int i = 0; i < result.size(); i++) {
+				if (result.get(i).getHold() > 0) {
+					if (holdList.contains(result.get(i)) == false) {
+						holdList.add(result.get(i)); 
+					}
 				}
 			}
-		}
-		//drop irrelevant stuff from holdList, add relevant to result
-		List<Arrow> removeList = new LinkedList<Arrow>();
-		for(int i = 0;i<holdList.size();i++){
-			Arrow holdArrow = holdList.get(i);
-			if(holdArrow.getHold() + holdArrow.getTime() > endTime){
-				removeList.add(holdArrow);
-			} else if(result.contains(holdList.get(i)) == false){
-				result.add(holdList.get(i));
+			// drop irrelevant stuff from holdList, add relevant to result
+			List<Arrow> removeList = new LinkedList<Arrow>();
+			for (int i = 0; i < holdList.size(); i++) {
+				Arrow holdArrow = holdList.get(i);
+				if (holdArrow.getHold() + holdArrow.getTime() < startTime) {
+					removeList.add(holdArrow);
+				} else if (result.contains(holdList.get(i)) == false) {
+					result.add(holdList.get(i));
+				}
 			}
+			for (int i = 0; i < removeList.size(); i++) {
+				holdList.remove(removeList.get(i));
+			}
+			return result;
 		}
-		for(int i = 0;i<removeList.size();i++){
-			holdList.remove(removeList.get(i));
-		}
-		return result;
 	}
 
 	/**

@@ -178,6 +178,10 @@ public class SelectorBackgroundPanel extends JPanel implements InputReceiver{
 		this.songSelectorPanel.setDifficulty(oldDifficulty);
 	}
 	@Override
+	public void pressEscape(){
+		
+	}
+	@Override
 	public void releaseLeft() {
 		this.songSelectorPanel.decreaseDifficulty();
 		updateDifficulty();

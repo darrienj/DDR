@@ -22,7 +22,7 @@ public class DancePanel extends JPanel implements InputReceiver{
 	private Dimension scaleFactor;
 	public static final int BEATS_ON_SCREEN = 60; //configurable
 	public static final int MILLISECONDS_PER_BEAT = 60; 
-	private static final int MILLISECONDS_ON_SCREEN = BEATS_ON_SCREEN*MILLISECONDS_PER_BEAT;
+	public static final int MILLISECONDS_ON_SCREEN = BEATS_ON_SCREEN*MILLISECONDS_PER_BEAT;
 	private static final int MILLISECONDS_PRESS_RANGE = MILLISECONDS_ON_SCREEN/5;
 	private ReceiveArrow receiveArrow;
 	private BufferedImage topBackground; 
@@ -72,7 +72,7 @@ public class DancePanel extends JPanel implements InputReceiver{
 		}
 		//pressed holds
 		for(Arrow arrow : arrowList){
-	    	if(arrow.getHold() >0){
+	    	if(arrow.getHold() >0 && arrow.getActive() == true){
 	    		drawArrow(arrow,g);
 	    	}
 	    }
@@ -159,6 +159,9 @@ public class DancePanel extends JPanel implements InputReceiver{
 	public void releaseDown(){
 		receiveArrow.releaseDown();
 		releaseArrow(Arrow.DOWN);
+	}
+	public void pressEscape(){
+		Main.endSong();
 	}
 	public void releaseEnter(){
 		

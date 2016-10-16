@@ -1,18 +1,22 @@
 package display;
 
 import java.awt.event.*;
-import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+
 import gnu.io.CommPortIdentifier; 
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent; 
 import gnu.io.SerialPortEventListener; 
+
 import java.util.Enumeration;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class DancePanelInput implements KeyListener, SerialPortEventListener{
 
+	private Set<Integer> pressedKeys = new TreeSet<Integer>();
 	InputReceiver panel;
 	static SerialPort serialPort;
 	long time = 0;
@@ -153,6 +157,9 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if(pressedKeys.contains(e.getKeyCode())){
+			return;
+		}
 		if(e.getKeyCode() == KeyEvent.VK_LEFT){
 			panel.pressLeft();
 		} else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
@@ -163,8 +170,10 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 			panel.pressDown();
 		} else if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			panel.pressEnter();
+		} else if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+			panel.pressEscape();
 		}
-		
+		pressedKeys.add(e.getKeyCode());
 	}
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -183,5 +192,6 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 		}else if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			panel.releaseEnter();
 		}
+		pressedKeys.remove(e.getKeyCode());
 	}
 }

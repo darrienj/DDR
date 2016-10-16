@@ -216,7 +216,7 @@ public class Score {
 		baseCombo = COMBOMULT / totalOfThirds;
 
 		NOTE_AMOUNT = BASESCORE
-				/ (song.getNoteCount() + song.getHoldCount() / 16.0);
+				/ (song.getNoteCount() + song.getTotalHoldDuration() / 16.0);
 	}
 
 	public Score() {
@@ -258,11 +258,6 @@ public class Score {
 			return GRADE_F[0];// F
 		}
 	}
-
-	public void addHold(double duration) {
-		score += duration * NOTE_AMOUNT;
-	}
-
 	public FadeImage missNote() {
 		return addNote(100);
 	}
@@ -278,13 +273,17 @@ public class Score {
 		List<Arrow> removeList = new LinkedList<Arrow>();
 		for (int index = 0; index < holdList.size(); index++) {
 			Arrow arrow = holdList.get(index);
-			double difference = time - lastUpdateTime;
-			if (time * 1000 > arrow.getTime() + arrow.getHold()) {
+			if(arrow.getActive()){
+				double difference = time - lastUpdateTime;
+				if (time > arrow.getTime()/1000.0 + arrow.getHold()/1000.0) {
+					removeList.add(arrow);
+					difference -= time
+							- ((arrow.getTime() + arrow.getHold()) / 1000.0);
+				}
+				this.score += difference * NOTE_AMOUNT;
+			} else{
 				removeList.add(arrow);
-				difference -= time
-						- ((arrow.getTime() + arrow.getHold()) / 1000.0);
 			}
-			this.score += difference * NOTE_AMOUNT;
 		}
 		for (Arrow arrow : removeList) {
 			holdList.remove(arrow);
@@ -315,7 +314,7 @@ public class Score {
 	}
 
 	public void releaseNote(Arrow arrow) {
-		this.holdList.remove(arrow);
+		
 	}
 
 	/**

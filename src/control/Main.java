@@ -10,6 +10,8 @@ import display.*;
 
 public class Main {
 
+	private static Music music;
+	
 	public static void main(String[] args){
 		Screen screen = new Screen();
 		int oldSelection = 1;
@@ -47,10 +49,26 @@ public class Main {
 	}
 	private static Score playSong(Screen screen,int songId, String musicFile,String songFile,String difficulty,String songName){
 		try {
-			Music music = new Music(musicFile);
-			Song song = new Song(songId,songFile,songName,difficulty);
-			screen.playSong(song);
+			music = new Music(musicFile);
+			Song song = null;
+			DanceChartBuilder builder = null;
+			if(PremadeSong.verifyExists(songFile)){
+				song = new PremadeSong(songId,songFile,songName,difficulty);
+				PremadeDanceChartBuilder tmpBuilder = new PremadeDanceChartBuilder();
+				tmpBuilder.setSong((PremadeSong)(song));
+				tmpBuilder.setTimePerBeat(DancePanel.MILLISECONDS_PER_BEAT);
+				builder = tmpBuilder;
+			} else{
+				song = new CustomSong(songId, songFile.substring(0, songFile.length()-5)+".csong",difficulty,songName);
+				((CustomSong)song).build();
+				CustomDanceChartBuilder tmpBuilder = new CustomDanceChartBuilder();
+				tmpBuilder.setSong((CustomSong)(song));
+				builder = tmpBuilder;
+			}			
+			builder.setTimeOnScreen(DancePanel.MILLISECONDS_ON_SCREEN);
+			screen.playSong(song,builder);
 			music.play();
+			
 			while(music.isFinished() == false){
 				screen.updateSong(music.getTime() + song.getOffset());
 			}
@@ -61,6 +79,11 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
+		}
+	}
+	public static void endSong(){
+		if(music != null){
+			music.stop();
 		}
 	}
 }

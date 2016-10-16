@@ -2,7 +2,7 @@ package control;
 
 public class Constants {
 
-	public final static String FILE_BASE = "/Users/drichmond/Projects/DDR/";
+	public final static String FILE_BASE = "./";
 	
 	public final static String RIGHT_QUARTER_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_quarter_right.png";
 	public final static String UP_QUARTER_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_quarter_up.png";

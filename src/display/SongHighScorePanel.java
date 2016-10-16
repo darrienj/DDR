@@ -446,5 +446,9 @@ public class SongHighScorePanel extends JPanel  implements InputReceiver{
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void pressEscape(){
+		
+	}
 	
 }

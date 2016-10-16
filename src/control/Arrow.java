@@ -60,8 +60,11 @@ public class Arrow {
 	 *            milliseconds
 	 */
 	public void deactivate(int time) {
-		this.active = false;
-		this.hold = Math.max(0, this.hold - (time - this.time));
+		if(Math.abs(time-(this.time + hold )) < 200){
+			this.active = true;
+		} else{
+			this.active = false;
+		}
 	}
 
 	/**
