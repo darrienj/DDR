@@ -172,7 +172,7 @@ public class DancePanel extends JPanel implements InputReceiver{
 		}
 		for(Arrow arrow : arrowList){
 			if(newArrowList.contains(arrow) == false){
-				if(arrow.getActive() == false){
+				if(arrow.hasBeenPressed() == false){
 					arrow.activate();
 					description = score.missNote();
 					description.start(currentTime);

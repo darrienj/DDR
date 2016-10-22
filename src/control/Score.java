@@ -216,7 +216,7 @@ public class Score {
 		baseCombo = COMBOMULT / totalOfThirds;
 
 		NOTE_AMOUNT = BASESCORE
-				/ (song.getNoteCount() + song.getTotalHoldDuration() / 16.0);
+				/ (song.getNoteCount() + song.getTotalHoldDuration() / 200);
 	}
 
 	public Score() {
@@ -274,13 +274,13 @@ public class Score {
 		for (int index = 0; index < holdList.size(); index++) {
 			Arrow arrow = holdList.get(index);
 			if(arrow.getActive()){
-				double difference = time - lastUpdateTime;
-				if (time > arrow.getTime()/1000.0 + arrow.getHold()/1000.0) {
+				double difference = time*1000 - lastUpdateTime*1000;
+				if (time*1000 > arrow.getTime() + arrow.getHold()) {
 					removeList.add(arrow);
-					difference -= time
-							- ((arrow.getTime() + arrow.getHold()) / 1000.0);
+					difference -= time*1000
+							- ((arrow.getTime() + arrow.getHold()));
 				}
-				this.score += difference * NOTE_AMOUNT;
+				this.score += difference/200.0 * NOTE_AMOUNT;
 			} else{
 				removeList.add(arrow);
 			}

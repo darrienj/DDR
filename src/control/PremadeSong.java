@@ -40,7 +40,7 @@ public class PremadeSong implements Song{
 					beatCount++;
 				}
 				if(line.contains("*")){
-					this.offset += (60.0/bpm)*-1;
+					this.offset += (60000.0/bpm);
 				}
 			}
 			reader.close();
@@ -48,7 +48,7 @@ public class PremadeSong implements Song{
 			
 			reader = new BufferedReader(new FileReader(file));
 			reader.readLine(); //get rid of bpm
-			beatCount = 1 + offset;
+			beatCount = 0;
 			while(reader.ready()){
 				String line = reader.readLine();
 				if(!line.contains("==================") && !line.contains("*")){

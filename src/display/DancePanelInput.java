@@ -22,10 +22,8 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 	long time = 0;
 	 /** The port we're normally going to use. */
 	private static final String PORT_NAMES[] = { 
-			"/dev/tty.usbserial-A9007UX1", // Mac OS X
-			"/dev/cu.usbmodem1421", //Mac OS X
-                        "/dev/ttyACM0", // Raspberry Pi
-			"/dev/ttyUSB0", // Linux
+			"/dev/tty.usbserial", // Mac OS X
+			"/dev/cu.usbmodem", //Mac OS X
 			"COM3", // Windows
 	};
 	/**
@@ -51,47 +49,46 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-
 		if(serialPort == null){
 			//First, Find an instance of serial port as set in PORT_NAMES.
 			while (portEnum.hasMoreElements()) {
 				CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
 				for (String portName : PORT_NAMES) {
-					if (currPortId.getName().equals(portName)) {
+					if (currPortId.getName().startsWith(portName)) {
 						portId = currPortId;
 						break;
 					} else{
-						System.out.println(currPortId.getName());
+						//System.out.println(currPortId.getName());
 					}
 				}
 			}
 			if (portId == null) {
-				System.out.println("Could not find ARDUINO port.");
+				//System.out.println("Could not find ARDUINO port.");
 				return;
 			}
-		}
-		try {
-			if(serialPort == null){
-				// open serial port, and use class name for the appName.
-				serialPort = (SerialPort) portId.open(this.getClass().getName(),
-						TIME_OUT);
-	
-				// set port parameters
-				serialPort.setSerialPortParams(DATA_RATE,
-						SerialPort.DATABITS_8,
-						SerialPort.STOPBITS_1,
-						SerialPort.PARITY_NONE);
-	
-				// open the streams
-				input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-				output = serialPort.getOutputStream();
+			try {
+				if(serialPort == null){
+					// open serial port, and use class name for the appName.
+					serialPort = (SerialPort) portId.open(this.getClass().getName(),
+							TIME_OUT);
+		
+					// set port parameters
+					serialPort.setSerialPortParams(DATA_RATE,
+							SerialPort.DATABITS_8,
+							SerialPort.STOPBITS_1,
+							SerialPort.PARITY_NONE);
+		
+					// open the streams
+					input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+					output = serialPort.getOutputStream();
+				}
+				// add event listeners
+				serialPort.removeEventListener();
+				serialPort.addEventListener(this);
+				serialPort.notifyOnDataAvailable(true);
+			} catch (Exception e) {
+				System.err.println(e.toString());
 			}
-			// add event listeners
-			serialPort.removeEventListener();
-			serialPort.addEventListener(this);
-			serialPort.notifyOnDataAvailable(true);
-		} catch (Exception e) {
-			System.err.println(e.toString());
 		}
 	}
 //	public void update(long deltaTime){
@@ -157,9 +154,9 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(pressedKeys.contains(e.getKeyCode())){
-			return;
-		}
+//		if(pressedKeys.contains(e.getKeyCode())){
+//			return;
+//		}
 		if(e.getKeyCode() == KeyEvent.VK_LEFT){
 			panel.pressLeft();
 		} else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
@@ -173,12 +170,13 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 		} else if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
 			panel.pressEscape();
 		}
-		pressedKeys.add(e.getKeyCode());
+		//pressedKeys.add(e.getKeyCode());
 	}
 	@Override
 	public void keyTyped(KeyEvent e) {
 
 	}
+	
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_LEFT){
@@ -192,6 +190,6 @@ public class DancePanelInput implements KeyListener, SerialPortEventListener{
 		}else if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			panel.releaseEnter();
 		}
-		pressedKeys.remove(e.getKeyCode());
+		//pressedKeys.remove(e.getKeyCode());
 	}
 }

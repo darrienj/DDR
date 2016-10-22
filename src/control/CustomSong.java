@@ -50,7 +50,6 @@ public class CustomSong implements Song {
 			arrowList.add(arrow);
 			noteCount++;
 			totalHold += hold;
-			System.out.println(hold);
 		}
 		reader.close();
 	}

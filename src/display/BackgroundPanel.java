@@ -21,6 +21,7 @@ public class BackgroundPanel extends JPanel{
 	Image background;
 	Dimension scaleFactor;
 	private DancePanel dancePanel;
+	private DancePanelInput dancePanelInput;
 	//laptop screen dimensions are 1280 x 800
 	public BackgroundPanel(Dimension dimension,BufferedImage background,ReceiveArrow receiveArrows,DanceChart danceChart,Score score){
 		super();
@@ -41,7 +42,8 @@ public class BackgroundPanel extends JPanel{
 			g.dispose();
 			GridBagConstraints c = new GridBagConstraints();
 			this.dancePanel = new DancePanel(scaleFactor,receiveArrows,danceChart,score,newBackground);
-			this.addKeyListener(new DancePanelInput(dancePanel));
+			dancePanelInput = new DancePanelInput(dancePanel);
+			this.addKeyListener(dancePanelInput);
 			this.setFocusable(true);
 			c.fill = GridBagConstraints.BOTH;
 			c.gridx = 0;
@@ -74,6 +76,7 @@ public class BackgroundPanel extends JPanel{
 	public void updateSong(double time){
 		this.requestFocus();
 		this.dancePanel.update(time);
+		this.dancePanelInput.initialize();
 	}
 	public Score getScore(){
 		return this.dancePanel.getScore();

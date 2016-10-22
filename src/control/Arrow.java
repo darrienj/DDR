@@ -20,6 +20,7 @@ public class Arrow {
 	private int direction;
 	private ArrowImage image;
 	private boolean active;
+	private boolean hasBeenPressed;
 
 	/**
 	 * 
@@ -40,16 +41,18 @@ public class Arrow {
 		this.image = image;
 		this.active = false;
 		this.direction = direction;
+		this.hasBeenPressed = false;
 	}
 
+	public boolean hasBeenPressed(){
+		return hasBeenPressed;
+	}
 	/**
 	 * activate the note.
 	 */
 	public void activate() {
 		this.active = true;
-		if (hold == 0) {
-
-		}
+		hasBeenPressed = true;
 	}
 
 	/**

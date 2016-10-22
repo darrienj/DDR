@@ -12,25 +12,25 @@ public class Constants {
 	public final static String UP_QUARTER_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_quarter_hold_up.png";
 	public final static String LEFT_QUARTER_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_quarter_hold_left.png";
 	public final static String DOWN_QUARTER_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_quarter_hold_down.png";
-	
-	public final static String RIGHT_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_right.png";
-	public final static String UP_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_up.png";
-	public final static String LEFT_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_left.png";
-	public final static String DOWN_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_down.png";
-	public final static String RIGHT_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_right.png";
-	public final static String UP_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_up.png";
-	public final static String LEFT_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_left.png";
-	public final static String DOWN_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_down.png";
-	
-	public final static String RIGHT_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_right.png";
-	public final static String UP_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_up.png";
-	public final static String LEFT_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_left.png";
-	public final static String DOWN_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_down.png";
-	public final static String RIGHT_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_right.png";
-	public final static String UP_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_up.png";
-	public final static String LEFT_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_left.png";
-	public final static String DOWN_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_down.png";
-	
+//	
+//	public final static String RIGHT_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_right.png";
+//	public final static String UP_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_up.png";
+//	public final static String LEFT_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_left.png";
+//	public final static String DOWN_EIGHTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_down.png";
+//	public final static String RIGHT_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_right.png";
+//	public final static String UP_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_up.png";
+//	public final static String LEFT_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_left.png";
+//	public final static String DOWN_EIGHTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_eighth_hold_down.png";
+//	
+//	public final static String RIGHT_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_right.png";
+//	public final static String UP_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_up.png";
+//	public final static String LEFT_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_left.png";
+//	public final static String DOWN_SIXTEENTH_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_down.png";
+//	public final static String RIGHT_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_right.png";
+//	public final static String UP_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_up.png";
+//	public final static String LEFT_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_left.png";
+//	public final static String DOWN_SIXTEENTH_HOLD_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_sixteenth_hold_down.png";
+//	
 	public final static String RECEIVE_LEFT_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_receive_left.png";
 	public final static String RECEIVE_RIGHT_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_receive_right.png";
 	public final static String RECEIVE_UP_ARROW = FILE_BASE+"DDR_Files/Arrow/ddr_arrow_plain_receive_up.png";

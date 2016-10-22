@@ -70,7 +70,7 @@ public class Main {
 			music.play();
 			
 			while(music.isFinished() == false){
-				screen.updateSong(music.getTime() + song.getOffset());
+				screen.updateSong(Math.max(0, music.getTime() + song.getOffset()/1000.0));
 			}
 			Score score = screen.endSong();
 			return score;
